@@ -41,6 +41,7 @@ function App() {
   const [message, setMessage] = useState("Press Start to enter the Trial");
   const [score, setScore] = useState(0)
   const [finalScore, setFinalScore] = useState("")
+  const [prevScore, setPrevScore] = useState(0)
 
   const feedbackTimerRef = useRef(null);
 
@@ -130,19 +131,6 @@ function App() {
 
 
     const expectedPad = sequence[playerIndex];
-
-
-    if (padIndex !== expectedPad) {
-      play({ id: "error" });
-      flashPad(expectedPad, 420);
-      setMessage(`The sequence broke at rune ${playerIndex + 1}.`);
-      setPhase("lost");
-      setFinalScore(`FINAL SCORE IS: ${score}`)
-      localStorage.setItem("Score", score);
-      let lastname = localStorage.getItem("Score");
-      console.log(lastname)
-      return;
-    }
 
 
     play({ id: PADS[padIndex].sound });
