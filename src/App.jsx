@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 import spriteUrl from "./assets/sounds/simon-sprite.mp3";
 import "./App.css";
-
+import { images } from "./assets/images/images";
 
 const PADS = [
-  { id: "ember", label: "Ember", glyph: "I", color: "#fbbf24", sound: "one" },
-  { id: "tide", label: "Tide", glyph: "II", color: "#38bdf8", sound: "two" },
-  { id: "thorn", label: "Thorn", glyph: "III", color: "#4ade80", sound: "three" },
-  { id: "blood", label: "Blood", glyph: "IV", color: "#fb7185", sound: "four" },
+  { id: "ember", label: "Ember", glyph: "I", color: "#fbbf24", sound: "one", src: images[0] },
+  { id: "tide", label: "Tide", glyph: "II", color: "#38bdf8", sound: "two", src: images[1] },
+  { id: "thorn", label: "Thorn", glyph: "III", color: "#4ade80", sound: "three", src: images[2] },
+  { id: "blood", label: "Blood", glyph: "IV", color: "#fb7185", sound: "four", src: images[3] },
 ];
+
 
 
 const INITIAL_SPEED = 650;
@@ -24,6 +25,7 @@ function App() {
 
   const [play] = useSound(spriteUrl, {
     interrupt: true,
+    soundEnabled: true,
     sprite: {
       one: [0, 500],
       two: [1000, 500],
@@ -32,7 +34,16 @@ function App() {
       error: [4000, 1000],
     },
   });
+  console.log(PADS[0].src)
 
+  const [sequence, setSequence] = useState([]);
+  const [playerIndex, setPlayerIndex] = useState(0);
+  const [phase, setPhase] = useState("idle");
+  const [activePad, setActivePad] = useState(null);
+  const [speedMs, setSpeedMs] = useState(INITIAL_SPEED);
+  const [message, setMessage] = useState("Press Start to enter the Trial");
+  const [score, setScore] = useState(0)
+  const [finalScore, setFinalScore] = useState("")
 
   const feedbackTimerRef = useRef(null);
 
@@ -123,22 +134,18 @@ function App() {
 
     const expectedPad = sequence[playerIndex];
 
+
     if (padIndex !== expectedPad) {
       play({ id: "error" });
       flashPad(expectedPad, 420);
       setMessage(`The sequence broke at rune ${playerIndex + 1}.`);
-      setFinalScore(`YOUR FINAL SCORE: ${score}`)
-
-      const savedBestScore = Number(localStorage.getItem("MAXSCORE")) || 0;
-
-      if (score > savedBestScore) {
-        localStorage.setItem("MAXSCORE", score);
-      }
-
       setPhase("lost");
+      setFinalScore(`FINAL SCORE IS: ${score}`)
+      localStorage.setItem("Score", score);
+      let lastname = localStorage.getItem("Score");
+      console.log(lastname)
       return;
     }
-
 
 
     play({ id: PADS[padIndex].sound });
@@ -185,19 +192,20 @@ function App() {
   return (
     <main className="game-shell">
       <section className="game-card" aria-labelledby="game-title">
-        <header className="game-header">
-          <p className="eyebrow">The Resonant Trial</p>
-          <h1 id="game-title">Simon of Kaotika</h1>
-        </header>
-
 
         {phase === "idle" ? (
-          <div className="start-panel">
-            <p>Watch the runes, remember their order and answer.</p>
-            <button className="action-button" onClick={startGame}>
-              Start the Trial
-            </button>
-          </div>
+          <>
+            <header className="game-header">
+              <p className="eyebrow">The Resonant Trial</p>
+              <h1 id="game-title">Simon of Kaotika</h1>
+            </header>
+            <div className="start-panel">
+              <p >Watch the potions Order, Select the right answer.</p>
+              <button className="action-button" onClick={startGame}>
+                Start the Trial
+              </button>
+            </div>
+          </>
         ) : (
           <>
             <div className="hud">
@@ -218,12 +226,10 @@ function App() {
                   disabled={phase !== "player"}
                   aria-label={`${pad.label} rune`}
                 >
-                  <span aria-hidden="true">{pad.glyph}</span>
+                  {<img style={{ "width": '200px' }} src={pad.src} />}
                 </button>
               ))}
             </div>
-
-
             {phase === "lost" && (
               <button className="action-button" onClick={startGame}>
                 Try Again
