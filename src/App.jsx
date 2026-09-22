@@ -33,15 +33,6 @@ function App() {
     },
   });
 
-  const [sequence, setSequence] = useState([]);
-  const [playerIndex, setPlayerIndex] = useState(0);
-  const [phase, setPhase] = useState("idle");
-  const [activePad, setActivePad] = useState(null);
-  const [speedMs, setSpeedMs] = useState(INITIAL_SPEED);
-  const [message, setMessage] = useState("Press Start to enter the Trial");
-  const [score, setScore] = useState(0)
-  const [finalScore, setFinalScore] = useState("")
-  const [prevScore, setPrevScore] = useState(0)
 
   const feedbackTimerRef = useRef(null);
 
@@ -131,6 +122,23 @@ function App() {
 
 
     const expectedPad = sequence[playerIndex];
+
+    if (padIndex !== expectedPad) {
+      play({ id: "error" });
+      flashPad(expectedPad, 420);
+      setMessage(`The sequence broke at rune ${playerIndex + 1}.`);
+      setFinalScore(`YOUR FINAL SCORE: ${score}`)
+
+      const savedBestScore = Number(localStorage.getItem("MAXSCORE")) || 0;
+
+      if (score > savedBestScore) {
+        localStorage.setItem("MAXSCORE", score);
+      }
+
+      setPhase("lost");
+      return;
+    }
+
 
 
     play({ id: PADS[padIndex].sound });
