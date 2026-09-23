@@ -21,7 +21,8 @@ const colors = ["#fbbf24", "#800080", "#4ade80", "#fb7185"]
 
 function App() {
 
-  const[playLost, {stop}] = useSound(spriteUrl2)
+  const[playLost, {stop}] = useSound(spriteUrl2, {playbackRate :
+    2, interrupt: true})
 
   const [play] = useSound(spriteUrl, {
     interrupt: true,
