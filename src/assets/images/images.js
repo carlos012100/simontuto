@@ -2,5 +2,6 @@ import potion from "./potion.png"
 import potion1 from "./potion1.png"
 import potion2 from "./potion2.png"
 import potion3 from "./potion3.png"
+import greenPot from "./greenPot.png"
 
-export const images = [potion, potion1, potion2, potion3]
+export const images = [potion, potion1, greenPot, potion3]

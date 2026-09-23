@@ -39,7 +39,6 @@ button {
 .eyebrow {
   margin: 0;
   color: silver;
-  text-transform: uppercase;
   bottom: 25vh;
   position: relative;
   font-size: 2.5em;
@@ -60,12 +59,17 @@ button {
 .hud {
   min-height: 4.5rem;
   display: grid;
-  gap: 0.3rem;
+  gap: 2rem;
   margin-bottom: 1rem;
+  font-family: "Home";
+  position: relative;
+  bottom: 15vh;
+  font-size: 2.5rem;
+  color: silver;
 }
 
 .board {
-  width: min(82vw, 34rem);
+  width: min(100vw, 34rem);
   aspect-ratio: auto;
   display: flex;
   grid-template-columns: repeat(2, 1fr);
@@ -80,15 +84,26 @@ button {
   color: #111827;
   font-size: clamp(1.2rem, 5vw, 2.2rem);
   font-weight: 800;
-  opacity: 0.5;
   cursor: pointer;
   transform: scale(1);
   transition: opacity 120ms ease, transform 120ms ease,
     filter 120ms ease;
   position: relative;
-  top: 150px;
-  right: 150px;
+  top: 25vh;
+  right: 15vh;
 
+}
+
+.score-style {
+  font-family: "Home";
+  font-size: .9rem;
+  border: 5px outset silver;
+  background-color: silver;
+  padding: 5px;
+  width: 10rem;
+  position: absolute;
+  top: 2rem;
+  right: 22rem
 }
 
 /* .pad--ember { border-radius: 100% 1rem 1rem 1rem;}
@@ -96,9 +111,10 @@ button {
 .pad--thorn { border-radius: 1rem 1rem 1rem 100%; }
 .pad--blood { border-radius: 1rem 1rem 100% 1rem; } */
 .pad.is-active {
-  opacity: 1;
-  filter: brightness(1.25) saturate(1.2);
-  transform: scale(0.96);
+  opacity: 0.8;
+  filter: brightness(1.50) saturate(1.2);
+  transform: scale(1.2);
+  border-radius: 1rem;
 }
 
 .pad:focus-visible,
@@ -117,24 +133,40 @@ button {
   font-weight: bold;
   color: black;
   position: relative;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   border: 10px outset silver;
-  padding: 20px;
-  background-color: rgba(192, 192, 192, 0.5);
-  top: 10vh;
+  padding: 25px;
+  background-color: rgba(192, 192, 192, 0.7);
+  top: 12vh;
 }
 
 
 .action-button {
-  border: 0;
-  border-radius: 1rem;
-  padding: 0.85rem 1.4rem;
-  background: rgba(0, 0, 0, 0.5);
-  color: beige;
+  background: rgba(192, 192, 192, 0.7);
+  border: 10px outset silver;
+  color: black;
+  font-family: "Home";
   font-weight: 800;
   cursor: pointer;
-  top: 20vh;
+  padding: 15px;
+  justify-self: center;
   position: relative;
+  top: 10rem;
+}
+
+.action-buttonTry {
+  background: rgba(192, 192, 192, 0.7);
+  border: 10px outset silver;
+  color: black;
+  font-family: "Home";
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 20px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 20rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -143,10 +175,6 @@ button {
   }
 }
 
-.score-style {
-  color: white;
-  font-style: italic;
-}
 
 @font-face {
   font-family: "HomeVideo";

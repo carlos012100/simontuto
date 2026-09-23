@@ -1,36 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
-import spriteUrl from "./assets/sounds/simon-sprite.mp3";
+import spriteUrl2 from "./assets/sounds/lose.mp3"
+import spriteUrl from "./assets/sounds/simonSprite.mp3";
 import "./App.css";
 import { images } from "./assets/images/images";
 
 const PADS = [
   { id: "ember", label: "Ember", glyph: "I", color: "#fbbf24", sound: "one", src: images[0] },
-  { id: "tide", label: "Tide", glyph: "II", color: "#38bdf8", sound: "two", src: images[1] },
-  { id: "thorn", label: "Thorn", glyph: "III", color: "#4ade80", sound: "three", src: images[2] },
-  { id: "blood", label: "Blood", glyph: "IV", color: "#fb7185", sound: "four", src: images[3] },
+  { id: "tide", label: "Tide", glyph: "II", color: "#800080", sound: "one", src: images[1] },
+  { id: "thorn", label: "Thorn", glyph: "III", color: "#4ade80", sound: "one", src: images[2] },
+  { id: "blood", label: "Blood", glyph: "IV", color: "#fb7185", sound: "one", src: images[3] },
 ];
-
-
 
 const INITIAL_SPEED = 650;
 const MINIMUM_SPEED = 260;
 const FLASH_RATIO = 0.55;
 
-
-const randomPad = () => Math.floor(Math.random() * PADS.length);
+const colors = ["#fbbf24", "#800080", "#4ade80", "#fb7185"]
 
 
 function App() {
+
+  const[playLost, {stop}] = useSound(spriteUrl2)
 
   const [play] = useSound(spriteUrl, {
     interrupt: true,
     soundEnabled: true,
     sprite: {
       one: [0, 500],
-      two: [1000, 500],
-      three: [2000, 500],
-      four: [3000, 500],
       error: [4000, 1000],
     },
   });
@@ -44,6 +41,10 @@ function App() {
   const [message, setMessage] = useState("Press Start to enter the Trial");
   const [score, setScore] = useState(0)
   const [finalScore, setFinalScore] = useState("")
+  const [colorPads, setNewColorPads] = useState(PADS)
+
+  const randomPad = () => Math.floor(Math.random() * colorPads.length);
+
 
   const feedbackTimerRef = useRef(null);
 
@@ -56,9 +57,10 @@ function App() {
     setPlayerIndex(0);
     setActivePad(null);
     setSpeedMs(INITIAL_SPEED);
-    setMessage("Watch the runes");
+    setMessage("Watch the sequence");
     setPhase("showing");
     setScore(0)
+    stop()
 
   }
 
@@ -85,7 +87,7 @@ function App() {
 
 
     const timers = [];
-    setMessage("Watch the runes.");
+    setMessage("Watch the potions.");
 
 
     sequence.forEach((padIndex, index) => {
@@ -95,7 +97,7 @@ function App() {
       timers.push(
         window.setTimeout(() => {
           setActivePad(padIndex);
-          play({ id: PADS[padIndex].sound });
+          play({ id: colorPads[padIndex].sound });
         }, beginsAt)
       );
 
@@ -138,8 +140,9 @@ function App() {
     if (padIndex !== expectedPad) {
       play({ id: "error" });
       flashPad(expectedPad, 420);
-      setMessage(`The sequence broke at rune ${playerIndex + 1}.`);
+      setMessage(`You missed the potion ${playerIndex + 1}.`);
       setPhase("lost");
+      playLost()
       setFinalScore(`FINAL SCORE IS: ${score}`)
       localStorage.setItem("Score", score);
       let lastname = localStorage.getItem("Score");
@@ -148,7 +151,7 @@ function App() {
     }
 
 
-    play({ id: PADS[padIndex].sound });
+    play({ id: colorPads[padIndex].sound });
     flashPad(padIndex);
 
 
@@ -156,7 +159,7 @@ function App() {
 
 
     if (completedRound) {
-      setMessage("The Circle accepts your answer.");
+      setMessage("Keep it up!!");
       setScore((current) => current + 100)
       console.log("you scored points!!")
       console.log(score)
@@ -200,7 +203,7 @@ function App() {
               <h1 id="game-title">Simon of Kaotika</h1>
             </header>
             <div className="start-panel">
-              <p >Watch the potions Order, Select the right answer.</p>
+              <p >Select the right answer.</p>
               <button className="action-button" onClick={startGame}>
                 Start the Trial
               </button>
@@ -213,28 +216,28 @@ function App() {
               <span aria-live="polite">{message}</span>
             </div>
 
-
             <div className="board" aria-label="Simon rune board">
-              {PADS.map((pad, index) => (
+              {colorPads.map((pad, index) => (
                 <button
                   key={pad.id}
                   type="button"
                   className={`pad pad--${pad.id} ${activePad === index ? "is-active" : ""
                     }`}
-                  style={{ "--pad-color": pad.color }}
+                  style={{"--pad-color": activePad === index ? pad.color: null}}
                   onClick={() => handlePadPress(index)}
                   disabled={phase !== "player"}
                   aria-label={`${pad.label} rune`}
                 >
-                  {<img style={{ "width": '200px' }} src={pad.src} />}
+                  {<img style={{ "width": '200px'}} src={pad.src} />}
                 </button>
               ))}
-            </div>
-            {phase === "lost" && (
-              <button className="action-button" onClick={startGame}>
+                {phase === "lost" && (
+              <button className="action-buttonTry" onClick={startGame}>
                 Try Again
               </button>
             )}
+            </div>
+          
             {phase === "lost" ? <h2 className="score-style">
               {finalScore}
             </h2> : <h2 className="score-style">
